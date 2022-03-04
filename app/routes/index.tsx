@@ -1,12 +1,10 @@
 import { LoaderFunction, useLoaderData } from 'remix'
-import NavData from '~/nav/nav'
+import FlagTemplateJson from '~/flagSelect.json'
 import type { FlagTemplate, FlagTemplateMetadata, User } from '~/libs/models'
 import { useState } from 'react'
 import FlagTemplateComponent from '~/components/FlagTemplate'
 import { authenticator } from '~/libs/auth.server'
-import { Project, Projects } from 'launchdarkly-api-typescript'
-import AppHeader, { SimpleAppHeader } from '~/components/AppHeader'
-import { Topbar } from '~/components/TopBar'
+import { Project } from 'launchdarkly-api-typescript'
 
 async function getProjects(user: User) {
     const projects = await fetch(
@@ -79,7 +77,7 @@ export default function Index() {
                         id="template-select"
                         onChange={(e) => getFlag(e.target.value)}
                     >
-                        {NavData.map((nav: FlagTemplateMetadata) => (
+                        {FlagTemplateJson.map((nav: FlagTemplateMetadata) => (
                             <option
                                 key={nav.title}
                                 label={nav.title}
