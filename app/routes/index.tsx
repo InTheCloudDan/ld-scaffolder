@@ -34,7 +34,6 @@ export default function Index() {
     const [selectedFlag, setFlag] = useState()
     const [selectedProject, setProject] = useState()
     const [projects, user] = useLoaderData()
-    console.log(projects)
     async function getFlag(fileName: string) {
       const url = `http://localhost:3000/templates/${fileName}`
       const flag = await fetch(url)
@@ -69,7 +68,7 @@ export default function Index() {
                 <label>
                     Select Template:
                     <br />
-                    <select name="Select Template" id="template-select" onChange={(e => { console.log('this is on change', e); getFlag(e.target.value) } )}>
+                    <select name="Select Template" id="template-select" onChange={(e => getFlag(e.target.value) )}>
                         {NavData.map((nav: FlagTemplateMetadata) => (
                             <option
                                 key={nav.title}

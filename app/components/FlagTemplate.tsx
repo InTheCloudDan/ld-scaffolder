@@ -50,8 +50,6 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
        
         async function postFeatureFlag(user: User, flag: FeatureFlagBody) {
                 const url = `https://app.launchdarkly.com/api/v2/flags/${projectKey}`
-                console.log(url)
-                console.log(user.token)
                 const newFlag = await fetch(`https://app.launchdarkly.com/api/v2/flags/${projectKey}`,{
                   method: 'post',
                   headers: new Headers({
@@ -86,7 +84,6 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
                 const variationCount = Number(data.get("variationCount")) - 1
                 const variations = []
                 for (let i = 0; i <= variationCount; i++){
-                        console.log("here")
                         const variation = {
                                 name: data.get(`variations${i}.name`),
                                 description: data.get(`variations${i}.description`),
@@ -95,8 +92,6 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
                         variations.push(Object.fromEntries(Object.entries(variation).filter(([_, v]) => {return v != null && v != ''})))
                 }
                 newFlag["variations"] = variations
-                console.log(data.getAll("variations"))
-                console.log(newFlag)
                 postFeatureFlag(user, newFlag)
         }
         return (
@@ -169,7 +164,6 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
         <legend>Variations</legend>
         {flagData.variations.map((item: Variation, idx: number) => (
                 <>
-                {console.log(item.value)}
                 <label>
                 Name: <input name={`variations${idx}.name`} type="text" defaultValue={item.name} />
                 </label>

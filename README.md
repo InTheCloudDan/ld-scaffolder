@@ -2,6 +2,10 @@
 
 -   [Remix Docs](https://remix.run/docs)
 
+## Prerequisites
+
+Need to have `jq` installed. It is used to generated the template dropdown at build time from the `templates` directory.
+
 ## Development
 
 You will need an OAuth client/secret pair for LaunchDarkly. Copy the `.env.sample` file as shown below and update values.
