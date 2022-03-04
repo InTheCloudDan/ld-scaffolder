@@ -8,7 +8,7 @@
     "flag": {
         "name": "Configure: API Rate Limiting",
         "key": "configure-api-rate-limit",
-        "description": "This is a test flag",
+        "description": "Manage the application's external rate limiting",
         "tags": ["operational"],
         "temporary": false,
         "availability": {

@@ -1,0 +1,46 @@
+{
+    "metadata": {
+        "title": "Logging Levels",
+        "description": "Control logging levels of the application",
+        "tags": ["operational"],
+        "key": "configure_log_levels_basic"
+    },
+    "flag": {
+        "name": "Configure: Logging Levels",
+        "key": "configure-logging-level",
+        "description": "Manage the application's logging level",
+        "tags": ["operational"],
+        "temporary": false,
+        "availability": {
+            "client": false,
+            "mobile": false
+        },
+        "type": "number",
+        "variations": [
+            {
+                "name": "CRITICAL",
+                "value": 50
+            },
+            {
+                "name": "ERROR",
+                "value": 40
+            },
+            {
+                "name": "WARNING",
+                "value": 30
+            },
+            {
+                "name": "INFO",
+                "value": 20
+            },
+            {
+                "name": "DEBUG",
+                "value": 10
+            }
+        ],
+        "defaultVariation": {
+            "onVariation": 2,
+            "offVariation": 3
+        }
+    }
+}
