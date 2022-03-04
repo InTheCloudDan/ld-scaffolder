@@ -1,0 +1,46 @@
+{
+    "metadata": {
+        "title": "Rate Limiting",
+        "description": "Rate limit specific requests based on targeting",
+        "tags": ["operational"],
+        "key": "rate_limit_basic"
+    },
+    "flag": {
+      "name": "Configure: API Rate Limiting",
+      "key": "configure-api-rate-limit",
+      "description": "This is a test flag",
+      "tags": ["operational"],
+      "temporary": false,
+      "availability": {
+          "client": false,
+          "mobile": false
+      },
+      "type": "number",
+      "variations": [
+          {
+              "name": "1 request/sec",
+              "description": "Limit to 1 requests per second",
+              "value": 1
+          },
+          {
+            "name": "5 requests/sec",
+            "description": "Limit to 5 requests per second",
+            "value": 5
+        },
+        {
+          "name": "10 requests/sec",
+          "description": "Limit to 10 requests per second",
+          "value": 10
+      },
+      {
+        "name": "25 requests/sec",
+        "description": "Limit to 25 requests per second",
+        "value": 25
+    }
+      ],
+      "defaultVariation": {
+          "onVariation": 2,
+          "offVariation": 0
+      }
+  }
+}

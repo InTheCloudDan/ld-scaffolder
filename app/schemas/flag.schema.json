@@ -1,0 +1,33 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "Flag Template",
+	"description": "A product in the catalog",
+	"type": "object",
+    "metadata": {
+        "title": "Example Flag",
+        "description": "My amazing flag"
+    },
+    "flag": {
+      "name": "Example Flag Name",
+      "description": "This is a test flag",
+      "tags": ["fake-tag", "fake-tag2"],
+      "temporary": false,
+      "availability": {
+          "client": true,
+          "mobile": true
+      },
+      "variations": [
+          {
+              "name": "First Variation",
+              "description": "My First Variation"
+          },
+          {
+              "name": "Second Variation",
+              "description": "My Second Variation"
+          }
+      ],
+      "defaultVariation": {
+          "onVariation": 1,
+          "offVariation": 0
+      }
+  }

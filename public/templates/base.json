@@ -1,0 +1,35 @@
+{
+  "metadata": {
+      "title": "Example Flag",
+      "description": "My amazing flag",
+      "key": "base"
+  },
+  "flag": {
+    "name": "Example Flag Name 1st",
+    "key": "flag-key",
+    "description": "This is a test flag",
+    "tags": ["fake-tag", "fake-tag2"],
+    "temporary": false,
+    "availability": {
+        "client": true,
+        "mobile": true
+    },
+    "type": "boolean",
+    "variations": [
+      {
+        "name": "False Variation",
+        "description": "My Second Variation",
+        "value": false
+    },
+      {
+            "name": "True Variation",
+            "description": "My First Variation",
+            "value": true
+        }
+    ],
+    "defaultVariation": {
+        "onVariation": 1,
+        "offVariation": 0
+    }
+}
+}
