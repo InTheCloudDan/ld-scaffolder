@@ -19,6 +19,7 @@ From your terminal:
 ```sh
 npm run dev
 ```
+
 ## Deployment
 
 First, build your app for production:

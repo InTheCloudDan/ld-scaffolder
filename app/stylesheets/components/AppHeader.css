@@ -1,58 +1,57 @@
 .AppHeader {
-        padding: 1.6rem 4rem;
-        position: relative;
-        background: #fff;
-      }
-      
-      .AppHeader .Breadcrumbs {
-        margin-bottom: 1rem;
-      }
-      
-      .AppHeader--hasDescription {
-        padding: 1.6rem 4rem;
-      }
-      
-      .AppHeader-main {
-        position: relative;
-      }
-      
-      .AppHeader-main h1 {
-        font-size: var(--font-size-larger);
-        line-height: var(--line-height-small);
-        font-weight: var(--font-weight-regular);
-      }
-      
-      [data-osmotype='true'] .AppHeader-main h1 {
-        font-weight: var(--font-weight-medium);
-      }
-      
-      .AppHeader-main--hasDescription h1 {
-        font-size: var(--font-size-larger);
-        line-height: var(--line-height-small);
-      }
-      
-      .AppHeader-main--hasDescription p {
-        line-height: 3rem;
-      }
-      
-      [data-osmotype='true'] .AppHeader-main--hasDescription p {
-        line-height: 1.5;
-      }
-      
-      .AppHeader-main h1 > small {
-        color: var(--very-subtle-text-color);
-        font-size: var(--font-size-large);
-      }
-      
-      .AppHeader-main h1 .Button {
-        vertical-align: middle;
-      }
-      
-      .AppHeader-actions {
-        position: absolute;
-        top: 0;
-        right: 0;
-        line-height: 4rem;
-        height: 4rem;
-      }
-      
+    padding: 1.6rem 4rem;
+    position: relative;
+    background: #fff;
+}
+
+.AppHeader .Breadcrumbs {
+    margin-bottom: 1rem;
+}
+
+.AppHeader--hasDescription {
+    padding: 1.6rem 4rem;
+}
+
+.AppHeader-main {
+    position: relative;
+}
+
+.AppHeader-main h1 {
+    font-size: var(--font-size-larger);
+    line-height: var(--line-height-small);
+    font-weight: var(--font-weight-regular);
+}
+
+[data-osmotype='true'] .AppHeader-main h1 {
+    font-weight: var(--font-weight-medium);
+}
+
+.AppHeader-main--hasDescription h1 {
+    font-size: var(--font-size-larger);
+    line-height: var(--line-height-small);
+}
+
+.AppHeader-main--hasDescription p {
+    line-height: 3rem;
+}
+
+[data-osmotype='true'] .AppHeader-main--hasDescription p {
+    line-height: 1.5;
+}
+
+.AppHeader-main h1 > small {
+    color: var(--very-subtle-text-color);
+    font-size: var(--font-size-large);
+}
+
+.AppHeader-main h1 .Button {
+    vertical-align: middle;
+}
+
+.AppHeader-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    line-height: 4rem;
+    height: 4rem;
+}

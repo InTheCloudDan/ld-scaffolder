@@ -1,34 +1,35 @@
 {
-  "metadata": {
-      "title": "Example Flag",
-      "description": "My amazing flag",
-      "key": "basic_flag"
-  },
-  "flag": {
-    "name": "Example Flag Name",
-    "description": "This is a test flag",
-    "tags": ["fake-tag", "fake-tag2"],
-    "temporary": false,
-    "availability": {
-        "client": true,
-        "mobile": true
+    "metadata": {
+        "title": "Example Flag",
+        "description": "My amazing flag",
+        "key": "basic_flag"
     },
-    "type": "boolean",
-    "variations": [
-        {
-            "name": "True Variation",
-            "description": "My First Variation",
-            "value": true
+    "flag": {
+        "name": "Example Flag Name",
+        "key": "example-flag",
+        "description": "This is a test flag",
+        "tags": ["fake-tag", "fake-tag2"],
+        "temporary": false,
+        "availability": {
+            "client": true,
+            "mobile": true
         },
-        {
-            "name": "False Variation",
-            "description": "My Second Variation",
-            "value": false
+        "type": "boolean",
+        "variations": [
+            {
+                "name": "True Variation",
+                "description": "My First Variation",
+                "value": true
+            },
+            {
+                "name": "False Variation",
+                "description": "My Second Variation",
+                "value": false
+            }
+        ],
+        "defaultVariation": {
+            "onVariation": 1,
+            "offVariation": 0
         }
-    ],
-    "defaultVariation": {
-        "onVariation": 1,
-        "offVariation": 0
     }
-}
 }

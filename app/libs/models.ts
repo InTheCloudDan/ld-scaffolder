@@ -1,4 +1,4 @@
-import { Member } from "launchdarkly-api-typescript"
+import { Member } from 'launchdarkly-api-typescript'
 
 export type FlagTemplateMetadata = {
     title: string
@@ -7,45 +7,45 @@ export type FlagTemplateMetadata = {
 }
 
 type Availability = {
-  client: boolean
-  mobile: boolean
+    client: boolean
+    mobile: boolean
 }
 
 export type Variation = {
-  name?: string
-  description?: string
-  value: any
+    name?: string
+    description?: string
+    value: any
 }
 
 type DefaultVariation = {
-  onVariation: number
-  offVariation: number
+    onVariation: number
+    offVariation: number
 }
 
 export enum FlagType {
-  Boolean = "boolean",
-  String = "string",
-  Number = "number",
-  JSON = "json"
+    Boolean = 'boolean',
+    String = 'string',
+    Number = 'number',
+    JSON = 'json',
 }
 
 type FlagData = {
-  name: string
-  key: string
-  description?: string
-  temporary: boolean
-  type:FlagType
-  availability: Availability
-  variations: Variation[]
-  defaultVariation: DefaultVariation
+    name: string
+    key: string
+    description?: string
+    temporary: boolean
+    type: FlagType
+    availability: Availability
+    variations: Variation[]
+    defaultVariation: DefaultVariation
 }
 
 export type FlagTemplate = {
-  metadata: FlagTemplateMetadata,
-  flag: FlagData
+    metadata: FlagTemplateMetadata
+    flag: FlagData
 }
 
 export type User = {
-  token: string
-  data: Member
+    token: string
+    data: Member
 }
