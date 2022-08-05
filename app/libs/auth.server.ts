@@ -1,11 +1,10 @@
-import { Member, UsersApiAxiosParamCreator } from 'launchdarkly-api-typescript'
-import { createCookieSessionStorage } from 'remix'
+import { Member } from 'launchdarkly-api-typescript'
+import { createCookieSessionStorage, redirect, Session } from 'remix'
 import { Authenticator } from 'remix-auth'
-import { OAuth2Strategy } from 'remix-auth-oauth2'
 import { LaunchDarklyStrategy } from './LaunchDarklyStrategy'
 import { User } from './models'
 
-export let sessionStorage = createCookieSessionStorage({
+export const sessionStorage = createCookieSessionStorage({
     cookie: {
         name: '_session', // use any name you want here
         sameSite: 'lax', // this helps with CSRF
@@ -20,13 +19,15 @@ export let authenticator = new Authenticator<User>(sessionStorage, {
     throwOnError: true,
 })
 
+const httpProtocol = process.env.NODE_ENV === 'production' ? 'https' : 'http'
+
 authenticator.use(
     new LaunchDarklyStrategy(
         {
             domain: 'app.launchdarkly.com',
             clientID: process.env.CLIENT_ID!,
             clientSecret: process.env.CLIENT_SECRET!,
-            callbackURL: 'http://localhost:3000/auth/callback',
+            callbackURL: `${httpProtocol}://${process.env.DOMAIN}/auth/callback`,
             scope: 'writer',
         },
 
@@ -60,6 +61,24 @@ async function getUser(accessToken: string, refreshToken: string) {
         data: (await res.json()) as Member,
     }
 
-    console.log(JSON.stringify(user))
     return user
+}
+
+export async function LDAuthedRequest(session: Session, url: string, init: RequestInit) {
+  let { accessToken, refreshToken, ...rest } = session.get(authenticator.sessionKey);
+  console.log(accessToken)
+  console.log(refreshToken)
+  console.log(url)
+  let response = await fetch(url, { ...init, headers: { ...init.headers, Authorization: accessToken } })
+  if (response.status === 401) {
+    console.log(!refreshToken)
+    if (!refreshToken) {
+      return redirect('/login')
+    }
+    let newTokenResponse = await fetch(`https://app.launchdarkly.com/trust/oauth/token`, { headers: { Authorization: refreshToken } })
+    let newToken = await newTokenResponse.json()
+    session.set(authenticator.sessionKey, { ...rest, ...newToken })
+    return LDAuthedRequest(session, url, init)
+  }
+  return response;
 }

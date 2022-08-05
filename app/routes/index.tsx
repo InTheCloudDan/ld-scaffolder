@@ -1,13 +1,14 @@
-import { LoaderFunction, useLoaderData } from 'remix'
+import { LoaderFunction, redirect, useLoaderData } from 'remix'
 import FlagTemplateJson from '~/flagSelect.json'
 import type { FlagTemplate, FlagTemplateMetadata, User } from '~/libs/models'
 import { useState } from 'react'
 import FlagTemplateComponent from '~/components/FlagTemplate'
-import { authenticator } from '~/libs/auth.server'
+import { authenticator, sessionStorage, LDAuthedRequest } from '~/libs/auth.server'
 import { Project } from 'launchdarkly-api-typescript'
 
-async function getProjects(user: User) {
-    const projects = await fetch(
+async function getProjects(user: User, session: Session) {
+    const projects = await LDAuthedRequest(
+        session,
         `https://app.launchdarkly.com/api/v2/projects`,
         {
             headers: new Headers({
@@ -16,6 +17,9 @@ async function getProjects(user: User) {
             }),
         }
     )
+    if (!projects) {
+        redirect("/login")
+    }
     return projects.json()
 }
 
@@ -24,8 +28,11 @@ export let loader: LoaderFunction = async ({ request }) => {
         failureRedirect: '/login',
         throwOnError: true,
     })
+    const session = await sessionStorage.getSession(
+        request.headers.get("Cookie")
+      );
 
-    const projects = await getProjects(user)
+    const projects = await getProjects(user, session)
     return [projects, user]
 }
 
@@ -34,7 +41,7 @@ export default function Index() {
     const [selectedProject, setProject] = useState()
     const [projects, user] = useLoaderData()
     async function getFlag(fileName: string) {
-        const url = `http://localhost:3000/templates/${fileName}`
+        const url = `/templates/${fileName}`
         const flag = await fetch(url)
         const flagData = await flag.json()
         setFlag(flagData)
