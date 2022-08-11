@@ -21,18 +21,18 @@ export interface LaunchDarklyStrategyOptions {
 // The LaunchDarklyProfile extends the LaunchDarklyProfile with the extra params and mark
 // some of them as required
 export interface LaunchDarklyProfile extends OAuth2Profile {
-  id: string;
-  emails: Array<{ value: string }>;
-  memberData: Member;
+    id: string
+    emails: Array<{ value: string }>
+    memberData: Member
 }
 
 // This interface declare what extra params we will get from LaunchDarkly on the
 // verify callback
 export interface LaunchDarklyExtraParams
     extends Record<string, string | number> {
-    scope: string;
-    expires_in: number;
-    token_type: "Bearer";
+    scope: string
+    expires_in: number
+    token_type: 'Bearer'
 }
 
 // And we create our strategy extending the OAuth2Strategy, we also need to
@@ -46,7 +46,6 @@ export class LaunchDarklyStrategy<User> extends OAuth2Strategy<
     // The OAuth2Strategy already has a name but we override it to be specific of
     // the service we are using
     name = 'launchdarkly'
-
     private userInfoURL: string
     scope: string
 
@@ -55,7 +54,10 @@ export class LaunchDarklyStrategy<User> extends OAuth2Strategy<
         options: LaunchDarklyStrategyOptions,
         verify: StrategyVerifyCallback<
             User,
-            OAuth2StrategyVerifyParams<LaunchDarklyProfile, LaunchDarklyExtraParams>
+            OAuth2StrategyVerifyParams<
+                LaunchDarklyProfile,
+                LaunchDarklyExtraParams
+            >
         >
     ) {
         super(
@@ -81,33 +83,43 @@ export class LaunchDarklyStrategy<User> extends OAuth2Strategy<
         return new URLSearchParams(urlSearchParams)
     }
 
-    async authenticate(request: Request, sessionStorage: SessionStorage, options: AuthenticateOptions): Promise<User> {
-      const user = await super.authenticate(request, sessionStorage, options);
-      if (user) {
-        let session = await sessionStorage.getSession(
-          request.headers.get("Cookie")
-        );
-        session.set("auth_token", user.accessToken)
-        session.set("refresh_token", user.refreshToken)
-      }
+    async authenticate(
+        request: Request,
+        sessionStorage: SessionStorage,
+        options: AuthenticateOptions
+    ): Promise<User> {
+        const user = await super.authenticate(request, sessionStorage, options)
+        console.log(user)
+        if (user) {
+            let session = await sessionStorage.getSession(
+                request.headers.get('Cookie')
+            )
+            session.set('auth_token', user.token)
+            session.set('refresh_token', user.refreshToken)
+        }
 
-      return user
+        return user
     }
     // We also override how to use the accessToken to get the profile of the user.
     // Here we fetch the member's profile data
-    protected async userProfile(accessToken: string): Promise<LaunchDarklyProfile> {
-      let response = await fetch(`https://app.launchdarkly.com/api/v2/members/me`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+    protected async userProfile(
+        accessToken: string
+    ): Promise<LaunchDarklyProfile> {
+        let response = await fetch(
+            `https://app.launchdarkly.com/api/v2/members/me`,
+            {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            }
+        )
 
-      let data: Member = await response.json();
-     
-      let profile: LaunchDarklyProfile  = {
-        provider: 'launchdarkly',
-        id: data._id,
-        emails: [{value: data.email}],
-        memberData: data
-      }
-      return profile;
+        let data: Member = await response.json()
+
+        let profile: LaunchDarklyProfile = {
+            provider: 'launchdarkly',
+            id: data._id,
+            emails: [{ value: data.email }],
+            memberData: data,
+        }
+        return profile
     }
 }

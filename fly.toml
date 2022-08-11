@@ -1,7 +1,6 @@
-# fly.toml file generated for solitary-pine-5604 on 2022-03-04T16:40:32-05:00
+# fly.toml file generated for sparkling-sky-2537 on 2022-08-05T08:15:51-04:00
 
-app = "solitary-pine-5604"
-
+app = "sparkling-sky-2537"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
@@ -19,7 +18,6 @@ processes = []
   processes = ["app"]
   protocol = "tcp"
   script_checks = []
-
   [services.concurrency]
     hard_limit = 25
     soft_limit = 20

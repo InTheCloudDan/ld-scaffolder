@@ -27,7 +27,7 @@ authenticator.use(
             domain: 'app.launchdarkly.com',
             clientID: process.env.CLIENT_ID!,
             clientSecret: process.env.CLIENT_SECRET!,
-            callbackURL: `${httpProtocol}://${process.env.DOMAIN}/auth/callback`,
+            callbackURL: `https://${process.env.DOMAIN}/auth/callback`,
             scope: 'writer',
         },
 
@@ -38,6 +38,8 @@ authenticator.use(
             profile,
             context,
         }) => {
+            console.log('HERE')
+            console.log(accessToken, refreshToken)
             // here you can use the params above to get the user and return it
             // what you do inside this and how you find the user is up to you
             return await getUser(accessToken, refreshToken)
@@ -58,27 +60,53 @@ async function getUser(accessToken: string, refreshToken: string) {
 
     const user: User = {
         token: accessToken,
+        refreshToken: refreshToken,
         data: (await res.json()) as Member,
     }
 
     return user
 }
 
-export async function LDAuthedRequest(session: Session, url: string, init: RequestInit) {
-  let { accessToken, refreshToken, ...rest } = session.get(authenticator.sessionKey);
-  console.log(accessToken)
-  console.log(refreshToken)
-  console.log(url)
-  let response = await fetch(url, { ...init, headers: { ...init.headers, Authorization: accessToken } })
-  if (response.status === 401) {
-    console.log(!refreshToken)
-    if (!refreshToken) {
-      return redirect('/login')
+export async function LDAuthedRequest(
+    session: Session,
+    url: string,
+    init: RequestInit
+) {
+    let { token, refreshToken, ...rest } = session.get(authenticator.sessionKey)
+    console.log('This is the rest!!')
+    console.log(rest)
+    console.log('END')
+    const req = new Request(url, {
+        ...init,
+        headers: { ...init.headers, Authorization: `Bearer ${token}` },
+    })
+    console.log(JSON.stringify(req))
+    console.log(req)
+    console.log(req.headers)
+    let response = await fetch(req)
+    console.log(`Response: ${response.status}`)
+    if (response.status === 401) {
+        console.log(!refreshToken)
+        if (!refreshToken) {
+            return redirect('/login')
+        }
+
+        const body = new FormData()
+        body.append('token_type_hint', 'refresh_token')
+        let newTokenResponse = await fetch(
+            `https://app.launchdarkly.com/trust/oauth/token`,
+            {
+                headers: { Authorization: `Bearer ${rest['refresh_token']}` },
+                method: 'POST',
+                body,
+            }
+        )
+        console.log(newTokenResponse.status)
+        console.log('Test')
+        let newToken = await newTokenResponse.json()
+        console.log(newToken)
+        session.set(authenticator.sessionKey, { ...rest, ...newToken })
+        return LDAuthedRequest(session, url, init)
     }
-    let newTokenResponse = await fetch(`https://app.launchdarkly.com/trust/oauth/token`, { headers: { Authorization: refreshToken } })
-    let newToken = await newTokenResponse.json()
-    session.set(authenticator.sessionKey, { ...rest, ...newToken })
-    return LDAuthedRequest(session, url, init)
-  }
-  return response;
+    return response
 }

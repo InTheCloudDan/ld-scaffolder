@@ -47,5 +47,6 @@ export type FlagTemplate = {
 
 export type User = {
     token: string
+    refreshToken: string
     data: Member
 }

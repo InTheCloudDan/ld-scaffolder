@@ -1,0 +1,35 @@
+{
+    "metadata": {
+        "title": "Login",
+        "description": "Control basic login functionality",
+        "key": "login"
+    },
+    "flag": {
+        "name": "Login",
+        "key": "login",
+        "description": "Control basic login functionality",
+        "tags": [],
+        "temporary": false,
+        "availability": {
+            "client": true,
+            "mobile": false
+        },
+        "type": "boolean",
+        "variations": [
+            {
+                "name": "True Variation",
+                "description": "My First Variation",
+                "value": true
+            },
+            {
+                "name": "False Variation",
+                "description": "My Second Variation",
+                "value": false
+            }
+        ],
+        "defaultVariation": {
+            "onVariation": 1,
+            "offVariation": 0
+        }
+    }
+}

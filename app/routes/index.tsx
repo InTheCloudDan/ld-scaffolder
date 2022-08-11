@@ -1,13 +1,21 @@
-import { LoaderFunction, redirect, useLoaderData } from 'remix'
+import { LoaderFunction, redirect, Session, useLoaderData } from 'remix'
 import FlagTemplateJson from '~/flagSelect.json'
 import type { FlagTemplate, FlagTemplateMetadata, User } from '~/libs/models'
 import { useState } from 'react'
 import FlagTemplateComponent from '~/components/FlagTemplate'
-import { authenticator, sessionStorage, LDAuthedRequest } from '~/libs/auth.server'
-import { Project } from 'launchdarkly-api-typescript'
+import {
+    authenticator,
+    sessionStorage,
+    LDAuthedRequest,
+} from '~/libs/auth.server'
+import {
+    Project,
+    Projects,
+} from 'launchdarkly-api-typescript'
+import ProjectInfo from '~/components/ProjectInfo'
 
 async function getProjects(user: User, session: Session) {
-    const projects = await LDAuthedRequest(
+    const projects = (await LDAuthedRequest(
         session,
         `https://app.launchdarkly.com/api/v2/projects`,
         {
@@ -15,12 +23,15 @@ async function getProjects(user: User, session: Session) {
                 Authorization: `Bearer ${user.token}`,
                 'Content-Type': 'application/json',
             }),
+            redirect: 'follow',
         }
-    )
+    )) as Response
     if (!projects) {
-        redirect("/login")
+        redirect('/login')
     }
-    return projects.json()
+    const projectData = await projects
+    const projectText = await projectData.json()
+    return projectText
 }
 
 export let loader: LoaderFunction = async ({ request }) => {
@@ -29,26 +40,40 @@ export let loader: LoaderFunction = async ({ request }) => {
         throwOnError: true,
     })
     const session = await sessionStorage.getSession(
-        request.headers.get("Cookie")
-      );
+        request.headers.get('Cookie')
+    )
 
     const projects = await getProjects(user, session)
-    return [projects, user]
+
+    const url = new URL(request.url)
+    const term = url.searchParams.get('flags')
+    let arrTerm
+    if (term && term?.length > 0) {
+        arrTerm = term.split(',')
+    }
+
+    return {
+        projects: projects as Projects,
+        user: user as User,
+        flagQuery: arrTerm,
+    }
 }
 
 export default function Index() {
     const [selectedFlag, setFlag] = useState()
     const [selectedProject, setProject] = useState()
-    const [projects, user] = useLoaderData()
+    const { projects, user, flagQuery } = useLoaderData()
     async function getFlag(fileName: string) {
         const url = `/templates/${fileName}`
         const flag = await fetch(url)
         const flagData = await flag.json()
+        console.log(flagData)
         setFlag(flagData)
         return flagData as FlagTemplate
     }
 
     function updateProject(e) {
+        console.log(e.target.value)
         setProject(e.target.value)
     }
 
@@ -84,13 +109,31 @@ export default function Index() {
                         id="template-select"
                         onChange={(e) => getFlag(e.target.value)}
                     >
-                        {FlagTemplateJson.map((nav: FlagTemplateMetadata) => (
-                            <option
-                                key={nav.title}
-                                label={nav.title}
-                                value={nav.key}
-                            />
-                        ))}
+                        {FlagTemplateJson.map((nav: FlagTemplateMetadata) => {
+                            if (flagQuery) {
+                                const flagList: Array<any> = []
+                                flagQuery.forEach((query: string) => {
+                                    if (query == nav.key) {
+                                        flagList.push(
+                                            <option
+                                                key={nav.title}
+                                                label={nav.title}
+                                                value={nav.key}
+                                            />
+                                        )
+                                    }
+                                })
+                                return flagList
+                            } else {
+                                return (
+                                    <option
+                                        key={nav.title}
+                                        label={nav.title}
+                                        value={nav.key}
+                                    />
+                                )
+                            }
+                        })}
                     </select>
                 </label>
             </p>
@@ -100,6 +143,10 @@ export default function Index() {
                     flag={selectedFlag}
                     projectKey={selectedProject}
                 />
+            )}
+
+            {selectedProject && (
+                <ProjectInfo user={user} project={selectedProject} />
             )}
         </div>
     )
