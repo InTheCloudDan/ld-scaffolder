@@ -1,5 +1,4 @@
 import { FeatureFlagBody } from 'launchdarkly-api-typescript'
-import { useCallback, useState } from 'react'
 import { Form } from 'remix'
 import { FlagTemplate, FlagType, User, Variation } from '~/libs/models'
 
@@ -64,7 +63,7 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
         return newFlag
     }
 
-    function handleSubmit(event) {
+    function handleSubmit(event: any) {
         event.preventDefault()
         const data = new FormData(event.target)
         const newFlag: FeatureFlagBody = {

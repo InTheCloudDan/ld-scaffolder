@@ -89,7 +89,6 @@ export class LaunchDarklyStrategy<User> extends OAuth2Strategy<
         options: AuthenticateOptions
     ): Promise<User> {
         const user = await super.authenticate(request, sessionStorage, options)
-        console.log(user)
         if (user) {
             let session = await sessionStorage.getSession(
                 request.headers.get('Cookie')

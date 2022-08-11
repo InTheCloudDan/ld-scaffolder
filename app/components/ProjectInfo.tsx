@@ -1,5 +1,6 @@
 import { Project } from 'launchdarkly-api-typescript'
 import { useEffect, useState } from 'react'
+import { Link } from 'remix'
 import { User } from '~/libs/models'
 
 type ProjectInfoProps = {
@@ -37,7 +38,7 @@ export default function ProjectInfo(props: ProjectInfoProps) {
                 )
                 .map((environment) => {
                     return (
-                        <p>
+                        <p key={environment.key}>
                             Environment: {environment.key}
                             <ul>
                                 <li>ClientID: {environment._id}</li>

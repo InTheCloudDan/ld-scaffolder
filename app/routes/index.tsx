@@ -66,7 +66,7 @@ export let loader: LoaderFunction = async ({ request }) => {
 
 export default function Index() {
     const [selectedFlag, setFlag] = useState()
-    const [selectedProject, setProject] = useState()
+    const [selectedProject, setProject] = useState("")
     const { projects, user, flagQuery, envQuery } = useLoaderData()
 
     useEffect(() => {
@@ -82,7 +82,7 @@ export default function Index() {
         return flagData as FlagTemplate
     }
 
-    function updateProject(e) {
+    function updateProject(e: React.ChangeEvent<HTMLSelectElement>) {
         setProject(e.target.value)
     }
 
