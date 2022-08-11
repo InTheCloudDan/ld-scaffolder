@@ -1,9 +1,10 @@
 import { FeatureFlagBody } from 'launchdarkly-api-typescript'
+import { useEffect, useState } from 'react'
 import { Form } from 'remix'
 import { FlagTemplate, FlagType, User, Variation } from '~/libs/models'
 
 type FlagTemplateProps = {
-    flag: FlagTemplate
+    flag: string
     projectKey?: string
     user: User
 }
@@ -42,10 +43,24 @@ function checkBoolean(flag: FlagType) {
 }
 
 export default function FlagTemplateComponent(props: FlagTemplateProps) {
-    const metadata = props.flag.metadata
-    const flagData = props.flag.flag
+    const flagData = props.flag
     const user = props.user
     const projectKey = props.projectKey
+    const [selectedFlag, setFlag] = useState<FlagTemplate | undefined>()
+
+    useEffect(() => {
+        getFlag(flagData)
+        // this hook will get called everytime when myArr has changed
+        // perform some action which will get fired everytime when myArr gets updated
+    }, [flagData])
+
+    const getFlag = async (fileName: string) => {
+        const url = `/templates/${fileName}`
+        const flag = await fetch(url)
+        const flagData = await flag.json()
+        console.log(flagData)
+        setFlag(flagData)
+    }
 
     async function postFeatureFlag(user: User, flag: FeatureFlagBody) {
         const url = `https://app.launchdarkly.com/api/v2/flags/${projectKey}`
@@ -109,8 +124,8 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
     return (
         <div>
             <div>
-                <h1>{metadata.title}</h1>
-                <pre>{metadata.description}</pre>
+                <h1>{selectedFlag?.metadata.title}</h1>
+                <pre>{selectedFlag?.metadata.description}</pre>
             </div>
             <div>
                 <Form method="post" onSubmit={handleSubmit}>
@@ -120,7 +135,7 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
                             <input
                                 name="name"
                                 type="text"
-                                defaultValue={flagData.name}
+                                defaultValue={selectedFlag?.flag.name}
                             />
                         </label>
                     </p>
@@ -130,7 +145,7 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
                             <input
                                 name="key"
                                 type="text"
-                                defaultValue={flagData.key}
+                                defaultValue={selectedFlag?.flag.key}
                             />
                         </label>
                     </p>
@@ -140,7 +155,7 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
                             <input
                                 name="description"
                                 type="text"
-                                defaultValue={flagData.description}
+                                defaultValue={selectedFlag?.flag.description}
                             />
                         </label>
                     </p>
@@ -150,7 +165,7 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
                             <input
                                 name="temporary"
                                 type="checkbox"
-                                defaultChecked={!flagData.temporary}
+                                defaultChecked={!selectedFlag?.flag.temporary}
                             />
                         </label>
                     </p>
@@ -162,7 +177,9 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
                                 type="checkbox"
                                 id="usingEnvironmentId"
                                 name="usingEnvironmentId"
-                                defaultChecked={flagData.availability.client}
+                                defaultChecked={
+                                    selectedFlag?.flag.availability.client
+                                }
                             />
                         </label>
 
@@ -172,7 +189,9 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
                                 type="checkbox"
                                 id="usingMobileKey"
                                 name="usingMobileKey"
-                                defaultChecked={flagData.availability.mobile}
+                                defaultChecked={
+                                    selectedFlag?.flag.availability.mobile
+                                }
                             />
                         </label>
                     </fieldset>
@@ -185,10 +204,11 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
                                 name="onVariation"
                                 id="variation-on"
                                 defaultValue={
-                                    flagData.defaultVariation.onVariation
+                                    selectedFlag?.flag.defaultVariation
+                                        .onVariation
                                 }
                             >
-                                {flagData.variations.map(
+                                {selectedFlag?.flag.variations.map(
                                     (item: Variation, idx: number) => (
                                         <option
                                             key={item.value}
@@ -210,10 +230,11 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
                                 name="offVariation"
                                 id="variation-off"
                                 defaultValue={
-                                    flagData.defaultVariation.offVariation
+                                    selectedFlag?.flag.defaultVariation
+                                        .offVariation
                                 }
                             >
-                                {flagData.variations.map(
+                                {selectedFlag?.flag.variations.map(
                                     (item: Variation, idx: number) => (
                                         <option
                                             key={item.value}
@@ -232,7 +253,7 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
 
                     <fieldset>
                         <legend>Variations</legend>
-                        {flagData.variations.map(
+                        {selectedFlag?.flag.variations.map(
                             (item: Variation, idx: number) => (
                                 <>
                                     <label>
@@ -255,10 +276,12 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
                                         Value:{' '}
                                         <input
                                             name={`variations${idx}.value`}
-                                            type={checkInput(flagData.type)}
+                                            type={checkInput(
+                                                selectedFlag?.flag.type
+                                            )}
                                             defaultValue={item.value}
                                             readOnly={checkBoolean(
-                                                flagData.type
+                                                selectedFlag?.flag.type
                                             )}
                                         />
                                     </label>
@@ -271,13 +294,13 @@ export default function FlagTemplateComponent(props: FlagTemplateProps) {
                         type="hidden"
                         name="variationCount"
                         id="variationCount"
-                        value={flagData.variations.length}
+                        value={selectedFlag?.flag.variations.length}
                     />
                     <input
                         type="hidden"
                         name="flagType"
                         id="flagType"
-                        value={flagData.type}
+                        value={selectedFlag?.flag.type}
                     />
                     <button>Create Flag</button>
                 </Form>

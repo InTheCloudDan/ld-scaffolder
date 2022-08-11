@@ -65,22 +65,23 @@ export let loader: LoaderFunction = async ({ request }) => {
 }
 
 export default function Index() {
-    const [selectedFlag, setFlag] = useState()
-    const [selectedProject, setProject] = useState("")
+    const [selectedFlag, setFlag] = useState('')
+    const [selectedProject, setProject] = useState('')
     const { projects, user, flagQuery, envQuery } = useLoaderData()
 
-    useEffect(() => {
-        // this hook will get called everytime when myArr has changed
-        // perform some action which will get fired everytime when myArr gets updated
-    }, [selectedProject])
+    // useEffect(() => {
+    //     console.log
+    //     // this hook will get called everytime when myArr has changed
+    //     // perform some action which will get fired everytime when myArr gets updated
+    // }, [selectedFlag])
 
-    async function getFlag(fileName: string) {
-        const url = `/templates/${fileName}`
-        const flag = await fetch(url)
-        const flagData = await flag.json()
-        setFlag(flagData)
-        return flagData as FlagTemplate
-    }
+    // async function getFlag(fileName: string) {
+    //     const url = `/templates/${fileName}`
+    //     const flag = await fetch(url)
+    //     const flagData = await flag.json()
+    //     setFlag(flagData)
+    //     return flagData as FlagTemplate
+    // }
 
     function updateProject(e: React.ChangeEvent<HTMLSelectElement>) {
         setProject(e.target.value)
@@ -116,7 +117,7 @@ export default function Index() {
                     <select
                         name="Select Template"
                         id="template-select"
-                        onChange={(e) => getFlag(e.target.value)}
+                        onChange={(e) => setFlag(e.target.value)}
                     >
                         {FlagTemplateJson.map((nav: FlagTemplateMetadata) => {
                             if (flagQuery) {

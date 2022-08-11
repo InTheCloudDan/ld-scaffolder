@@ -1,33 +1,29 @@
 [
-  {
-    "title": "Example Flag",
-    "description": "My amazing flag",
-    "key": "basic_flag"
-  },
-  {
-    "title": "Logging Levels",
-    "description": "Control logging levels of the application",
-    "tags": [
-      "operational"
-    ],
-    "key": "configure_log_levels_basic"
-  },
-  {
-    "title": "Login",
-    "description": "Control basic login functionality",
-    "key": "login"
-  },
-  {
-    "title": "New UI",
-    "description": "Enable new UI",
-    "key": "newui"
-  },
-  {
-    "title": "Rate Limiting",
-    "description": "Rate limit specific requests based on targeting",
-    "tags": [
-      "operational"
-    ],
-    "key": "rate_limit_basic"
-  }
+    {
+        "title": "Example Flag",
+        "description": "My amazing flag",
+        "key": "basic_flag"
+    },
+    {
+        "title": "Logging Levels",
+        "description": "Control logging levels of the application",
+        "tags": ["operational"],
+        "key": "configure_log_levels_basic"
+    },
+    {
+        "title": "Login",
+        "description": "Control basic login functionality",
+        "key": "login"
+    },
+    {
+        "title": "New UI",
+        "description": "Enable new UI",
+        "key": "newui"
+    },
+    {
+        "title": "Rate Limiting",
+        "description": "Rate limit specific requests based on targeting",
+        "tags": ["operational"],
+        "key": "rate_limit_basic"
+    }
 ]
