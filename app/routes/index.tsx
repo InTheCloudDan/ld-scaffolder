@@ -1,17 +1,14 @@
 import { LoaderFunction, redirect, Session, useLoaderData } from 'remix'
 import FlagTemplateJson from '~/flagSelect.json'
 import type { FlagTemplate, FlagTemplateMetadata, User } from '~/libs/models'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import FlagTemplateComponent from '~/components/FlagTemplate'
 import {
     authenticator,
     sessionStorage,
     LDAuthedRequest,
 } from '~/libs/auth.server'
-import {
-    Project,
-    Projects,
-} from 'launchdarkly-api-typescript'
+import { Project, Projects } from 'launchdarkly-api-typescript'
 import ProjectInfo from '~/components/ProjectInfo'
 
 async function getProjects(user: User, session: Session) {
@@ -46,34 +43,46 @@ export let loader: LoaderFunction = async ({ request }) => {
     const projects = await getProjects(user, session)
 
     const url = new URL(request.url)
-    const term = url.searchParams.get('flags')
-    let arrTerm
-    if (term && term?.length > 0) {
-        arrTerm = term.split(',')
+    const flagQuery = url.searchParams.get('flags')
+    const environmentQuery = url.searchParams.get('environments')
+
+    let fqArr
+    if (flagQuery && flagQuery?.length > 0) {
+        fqArr = flagQuery.split(',')
+    }
+
+    let envArr
+    if (environmentQuery && environmentQuery?.length > 0) {
+        envArr = environmentQuery.split(',')
     }
 
     return {
         projects: projects as Projects,
         user: user as User,
-        flagQuery: arrTerm,
+        flagQuery: fqArr,
+        envQuery: envArr,
     }
 }
 
 export default function Index() {
     const [selectedFlag, setFlag] = useState()
     const [selectedProject, setProject] = useState()
-    const { projects, user, flagQuery } = useLoaderData()
+    const { projects, user, flagQuery, envQuery } = useLoaderData()
+
+    useEffect(() => {
+        // this hook will get called everytime when myArr has changed
+        // perform some action which will get fired everytime when myArr gets updated
+    }, [selectedProject])
+
     async function getFlag(fileName: string) {
         const url = `/templates/${fileName}`
         const flag = await fetch(url)
         const flagData = await flag.json()
-        console.log(flagData)
         setFlag(flagData)
         return flagData as FlagTemplate
     }
 
     function updateProject(e) {
-        console.log(e.target.value)
         setProject(e.target.value)
     }
 
@@ -88,7 +97,7 @@ export default function Index() {
                         <select
                             name="project-key"
                             id="project-key-select"
-                            onChange={updateProject}
+                            onChange={(e) => updateProject(e)}
                         >
                             {projects.items.map((item: Project) => (
                                 <option
@@ -137,16 +146,20 @@ export default function Index() {
                     </select>
                 </label>
             </p>
+            {selectedProject && (
+                <ProjectInfo
+                    user={user}
+                    project={selectedProject}
+                    envFilter={envQuery}
+                />
+            )}
+
             {selectedFlag && (
                 <FlagTemplateComponent
                     user={user}
                     flag={selectedFlag}
                     projectKey={selectedProject}
                 />
-            )}
-
-            {selectedProject && (
-                <ProjectInfo user={user} project={selectedProject} />
             )}
         </div>
     )
